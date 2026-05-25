@@ -1,48 +1,72 @@
-# Homelab Network Documentation
+# 🏠 Homelab Network Documentation
 
 > **A raw, technical documentation of my attempt to learn networking by building a pfSense router in my homelab.**
 >
-> This project was built as a stepping stone to understanding network fundamentals, as part of my journey into SRE and Platform Engineering. No corporate hype, just the exact debugging steps, commands, and failures I hit along the way.
+> This project was built as a stepping stone to understanding network fundamentals, as part of my journey into SRE and Platform Engineering. No corporate hype — just the exact debugging steps, commands, and failures I hit along the way.
+
+![Status](https://img.shields.io/badge/status-working-brightgreen?style=flat-square)
+![ISP](https://img.shields.io/badge/ISP-Airtel%20FTTH-blue?style=flat-square)
+![Firewall](https://img.shields.io/badge/firewall-pfSense%20CE-red?style=flat-square)
+![Hypervisor](https://img.shields.io/badge/hypervisor-Proxmox%20VE-orange?style=flat-square)
+![Location](https://img.shields.io/badge/location-India-white?style=flat-square)
 
 ---
 
-## 📋 Overview
+## 📖 The Short Version
 
-I set out to host some web apps on a spare PC running Proxmox. In the process of trying to open ports, I hit a hard limitation with my ISP-provided router's firmware.
+I wanted to self-host web apps on a spare PC. My ISP router said **no** (literally blocked port 443). So I learned how to virtualize my own firewall from scratch.
 
-Instead of working around it, I decided to virtualize my network routing using **pfSense**. This repository documents the exact struggles I faced and the commands I used to fix them.
+```mermaid
+flowchart LR
+    A(("🌐\nInternet")) --> B["📡 Airtel Router\n192.168.1.1"]
+    B -->|"LAN cable"| C["🖥️ Proxmox VE\n192.168.1.240"]
+    C --> D["🔥 pfSense VM\nWAN: 192.168.1.x\nLAN: 192.168.10.1"]
+    D -->|"USB Ethernet\nenxXXXXXXXXXXXX"| E["📶 TP-Link AP\nDHCP disabled"]
+    E -.->|"WiFi"| F(("📱 Protected\nDevices\n192.168.10.x"))
+
+    style A fill:#2d3436,stroke:#dfe6e9,color:#fff
+    style B fill:#0984e3,stroke:#74b9ff,color:#fff
+    style C fill:#00b894,stroke:#55efc4,color:#fff
+    style D fill:#d63031,stroke:#ff7675,color:#fff
+    style E fill:#e17055,stroke:#fab1a0,color:#fff
+    style F fill:#6c5ce7,stroke:#a29bfe,color:#fff
+```
 
 ---
 
-## 📚 Documentation (The War Stories)
+## 📚 The War Stories
 
-I've documented the entire setup process focusing on **What I wanted → What I tried → What failed → How I fixed it**.
-
-| # | Document | What It Covers |
+| # | Doc | What It Covers |
 |:---:|:---|:---|
-| **01** | [The Goal & Architecture](docs/01-the-goal.md) | The initial goal, physical cables, logical Proxmox bridges, and the final network diagram. |
-| **02** | [The ISP Wall](docs/02-the-isp-wall.md) | Testing for CGNAT (`curl ifconfig.me`), NAT loopback failures, and why the Airtel router's "Remote MGMT" port 443 block forced me to use pfSense. |
-| **03** | [The Dead NIC Saga](docs/03-the-dead-nic-saga.md) | Debugging a dead USB-to-Ethernet adapter using `lsusb`, `ip a`, and `state DOWN`, and replacing the hardware. |
-| **04** | [The TP-Link AP Struggle](docs/04-tp-link-ap-struggle.md) | How the vendor's buggy "AP Mode" killed the network, and the manual workaround (disabling DHCP + LAN-to-LAN bridging). |
-| **05** | [Debug Cheat Sheet](docs/05-debug-cheat-sheet.md) | A master list of all the CLI commands (`ss -tulnp`, `ethtool`, `ip link set up`) used to debug these issues. |
+| **01** | [🗺️ The Goal & Architecture](docs/01-the-goal.md) | Full physical + logical network diagrams, real IPs, bridge mapping, and the two-network split. |
+| **02** | [🧱 The ISP Wall](docs/02-the-isp-wall.md) | CGNAT check, NAT loopback trap, and the port 443 firmware lockout that forced pfSense. |
+| **03** | [💀 The Dead NIC Saga](docs/03-the-dead-nic-saga.md) | Debugging `enxXXXXXXXXXXXX` with `lsusb`, `ip a`, and `dmesg` — and replacing dead hardware. |
+| **04** | [📶 The TP-Link AP Struggle](docs/04-tp-link-ap-struggle.md) | How the vendor's "AP Mode" toggle broke everything and the manual fix that actually worked. |
+| **05** | [🛠️ Debug Cheat Sheet](docs/05-debug-cheat-sheet.md) | Every CLI command used across this project, what it does, and when to use it. |
+| **06** | [🔍 Network Reality Check](docs/06-network-reality-check.md) | Who is actually behind pfSense? (Spoiler: the Ubuntu VM is not.) |
 
 ---
 
-## 🛠️ Tech Stack Used
+## 🛠️ Tech Stack
 
-- **Hypervisor:** Proxmox VE
-- **Firewall/Router:** pfSense CE (Virtualized)
-- **Networking:** VirtIO Bridges (`vmbr0`, `vmbr1`)
-- **Hardware:** Spare PC, USB-to-Ethernet Adapter, TP-Link Router (as AP)
+| Layer | Tool |
+|:---|:---|
+| **Hypervisor** | Proxmox VE |
+| **Firewall / Router** | pfSense CE (Virtualized) |
+| **Virtual Networking** | VirtIO Bridges — `vmbr0`, `vmbr1` |
+| **Second NIC** | USB-to-Ethernet (`enxXXXXXXXXXXXX`, RTL8153) |
+| **Access Point** | TP-Link (manual AP mode — DHCP off, LAN-to-LAN) |
+| **App Hosting** | Ubuntu Server VM + Dokploy |
+| **Remote Access** | Tailscale |
 
 ---
 
 ## 🌍 Context
 
-- **Location:** India
-- **ISP:** Airtel FTTH (PPPoE connection, real Public IP confirmed)
-- **Goal:** Learn how traffic routes from the internet to internal services by controlling the firewall directly.
+- **Location:** India 🇮🇳
+- **ISP:** Airtel FTTH — PPPoE connection, confirmed real public IPv4
+- **Goal:** Understand how traffic routes from the internet to internal services by owning the firewall layer myself
 
 ---
 
-*This is a living document of my homelab learning process. The struggle is the documentation.*
+*This is a living document of my homelab learning process. The struggle is the documentation.* 🔧
