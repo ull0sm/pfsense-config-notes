@@ -1,8 +1,8 @@
 # 🏠 Homelab Network Documentation
 
-> **A raw, technical documentation of my attempt to learn networking by building a pfSense router in my homelab.**
+> **A raw, technical documentation of my attempt to host web apps by building a pfSense router in my homelab.**
 >
-> This project was built as a stepping stone to understanding network fundamentals, as part of my journey into SRE and Platform Engineering. No corporate hype — just the exact debugging steps, commands, and failures I hit along the way.
+> This project was built to bypass my ISP's limitations. No fluff — just the exact networking steps, the pfSense setup, and the ultimate CGNAT roadblock I hit along the way.
 
 ![Status](https://img.shields.io/badge/status-working-brightgreen?style=flat-square)
 ![ISP](https://img.shields.io/badge/ISP-Airtel%20FTTH-blue?style=flat-square)
@@ -40,10 +40,7 @@ flowchart LR
 |:---:|:---|:---|
 | **01** | [🗺️ The Goal & Architecture](docs/01-the-goal.md) | Full physical + logical network diagrams, real IPs, bridge mapping, and the two-network split. |
 | **02** | [🧱 The ISP Wall](docs/02-the-isp-wall.md) | CGNAT check, NAT loopback trap, and the port 443 firmware lockout that forced pfSense. |
-| **03** | [💀 The Dead NIC Saga](docs/03-the-dead-nic-saga.md) | Debugging `enxXXXXXXXXXXXX` with `lsusb`, `ip a`, and `dmesg` — and replacing dead hardware. |
-| **04** | [📶 The TP-Link AP Struggle](docs/04-tp-link-ap-struggle.md) | How the vendor's "AP Mode" toggle broke everything and the manual fix that actually worked. |
-| **05** | [🛠️ Debug Cheat Sheet](docs/05-debug-cheat-sheet.md) | Every CLI command used across this project, what it does, and when to use it. |
-| **06** | [🔍 Network Reality Check](docs/06-network-reality-check.md) | Who is actually behind pfSense? (Spoiler: the Ubuntu VM is not.) |
+| **03** | [🛑 The Final Verdict](docs/03-the-final-verdict.md) | The CGNAT realization, static IP costs in India, and why self-hosting on Airtel FTTH hit a dead end. |
 
 ---
 
@@ -55,16 +52,13 @@ flowchart LR
 | **Firewall / Router** | pfSense CE (Virtualized) |
 | **Virtual Networking** | VirtIO Bridges — `vmbr0`, `vmbr1` |
 | **Second NIC** | USB-to-Ethernet (`enxXXXXXXXXXXXX`, RTL8153) |
-| **Access Point** | TP-Link (manual AP mode — DHCP off, LAN-to-LAN) |
-| **App Hosting** | Ubuntu Server VM + Dokploy |
-| **Remote Access** | Tailscale |
 
 ---
 
 ## 🌍 Context
 
 - **Location:** India 🇮🇳
-- **ISP:** Airtel FTTH — PPPoE connection, confirmed real public IPv4
+- **ISP:** Airtel FTTH — PPPoE connection (Initial thought: real public IPv4. Reality: CGNAT trap)
 - **Goal:** Understand how traffic routes from the internet to internal services by owning the firewall layer myself
 
 ---

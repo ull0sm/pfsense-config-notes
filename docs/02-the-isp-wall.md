@@ -1,6 +1,6 @@
 # 🧱 02. The ISP Wall
 
-> **TL;DR:** I had a real public IP. I confirmed it. Then I found out Airtel's firmware hard-locks port 443 for itself. There was no workaround — pfSense was the only way out.
+> **TL;DR:** I *thought* I had a real public IP. I confirmed it (or so I thought). Then I found out Airtel's firmware hard-locks port 443 for itself. There was no workaround — pfSense was the only way out. (Spoiler: It still didn't work in the end because of CGNAT).
 
 ---
 
@@ -32,9 +32,13 @@ flowchart LR
 
 | Check | Result |
 |:---|:---|
-| ✅ Real public IPv4 | Yes — confirmed (matches router WAN IP) |
-| ✅ Not behind CGNAT | Confirmed |
+| ⚠️ Real public IPv4 | Yes — it matched the router WAN IP *at the time* (or so I thought) |
+| ⚠️ Not behind CGNAT | Confirmed... temporarily. |
 | ✅ Port forwarding should work | Theoretically... |
+
+> [!WARNING]
+> **The CGNAT Trap** 
+> I found out much later that my WAN connection was actually DHCP based and I was trapped behind a CGNAT. What I thought was a real public IP was either a temporary illusion or a misread. But at the time, I didn't know this, so I pushed forward. (See [03 — The Final Verdict](03-the-final-verdict.md) for the tragic end to this story).
 
 I felt like I was 90% there. *I was not.*
 

@@ -15,9 +15,7 @@ It started with a very simple goal:
 | Thing | Details |
 |:---|:---|
 | 🖥️ **Proxmox VE** | A spare PC turned hypervisor |
-| 🐧 **Ubuntu Server VM** | Running Dokploy with Next.js apps |
-| 🔒 **Tailscale** | Installed for remote access |
-| 📡 **Airtel FTTH** | ISP in India — real public IP (confirmed) |
+| 📡 **Airtel FTTH** | ISP in India — thought it was a real public IP (it wasn't) |
 | 🧠 **Networking knowledge** | "Plug in ethernet, internet works" |
 
 ### What I wanted
@@ -178,7 +176,4 @@ The rest of the docs cover exactly how I built this, what broke along the way, a
 | Next Step | Doc |
 |:---|:---|
 | Why I couldn't just use the Airtel router | → [02 — The ISP Wall](02-the-isp-wall.md) |
-| The USB adapter that was silently dead | → [03 — The Dead NIC Saga](03-the-dead-nic-saga.md) |
-| The TP-Link AP Mode that broke everything | → [04 — The TP-Link Struggle](04-tp-link-ap-struggle.md) |
-| All the CLI commands I used | → [05 — Debug Cheat Sheet](05-debug-cheat-sheet.md) |
-| Which devices are actually behind pfSense | → [06 — Network Reality Check](06-network-reality-check.md) |
+| The harsh reality of CGNAT in India | → [03 — The Final Verdict](03-the-final-verdict.md) |
