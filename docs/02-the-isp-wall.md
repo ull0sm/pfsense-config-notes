@@ -1,10 +1,10 @@
-# 🧱 02. The ISP Wall
+# 02. The ISP Wall
 
 > **TL;DR:** I *thought* I had a real public IP. I confirmed it (or so I thought). Then I found out Airtel's firmware hard-locks port 443 for itself. There was no workaround — pfSense was the only way out. (Spoiler: It still didn't work in the end because of CGNAT).
 
 ---
 
-## 🔎 Step 1 — Do I Even Have a Real Public IP?
+## Step 1 — Do I Even Have a Real Public IP?
 
 Before you can host anything, you need to know if your ISP is hiding you behind a shared IP (CGNAT). Here's how I checked:
 
@@ -23,7 +23,7 @@ Then I logged into the Airtel router at `192.168.1.1` and compared the WAN IP sh
 flowchart LR
     A["curl ifconfig.me\n→ YOUR_PUBLIC_IP"] --> CHECK{"Matches\nAirtel WAN IP?"}
     CHECK -->|"✅ YES"| GOOD["Real Public IP\nNot behind CGNAT"]
-    CHECK -->|"❌ NO"| BAD["Behind CGNAT\nPort forwarding won't work"]
+    CHECK -->|"NO"| BAD["Behind CGNAT\nPort forwarding won't work"]
 
     style GOOD fill:#00b894,stroke:#55efc4,color:#fff,font-weight:bold
     style BAD fill:#d63031,stroke:#ff7675,color:#fff
@@ -32,8 +32,8 @@ flowchart LR
 
 | Check | Result |
 |:---|:---|
-| ⚠️ Real public IPv4 | Yes — it matched the router WAN IP *at the time* (or so I thought) |
-| ⚠️ Not behind CGNAT | Confirmed... temporarily. |
+| ⚠ Real public IPv4 | Yes — it matched the router WAN IP *at the time* (or so I thought) |
+| ⚠ Not behind CGNAT | Confirmed... temporarily. |
 | ✅ Port forwarding should work | Theoretically... |
 
 > [!WARNING]
@@ -44,13 +44,13 @@ I felt like I was 90% there. *I was not.*
 
 ---
 
-## ❌ Step 2 — Port Forwarding Failures
+## Step 2 — Port Forwarding Failures
 
 ### Attempt 1: Forward port 8006 (Proxmox UI)
 
 I set up a forwarding rule on the Airtel router: `WAN 8006 → 192.168.1.240:8006`
 
-**Symptom:** Tested from my phone (on WiFi) → ⏱️ Timeout
+**Symptom:** Tested from my phone (on WiFi) →  Timeout
 
 **Investigation:**
 ```bash
@@ -86,21 +86,21 @@ The router threw this:
 
 ```mermaid
 flowchart TD
-    START["🎯 Goal: Forward port 443"] --> T1
+    START["Goal: Forward port 443"] --> T1
 
-    T1["Try different\nforwarding fields"] --> FAIL1["❌ Same error"]
+    T1["Try different\nforwarding fields"] --> FAIL1["Same error"]
     FAIL1 --> T2
 
-    T2["Search for hidden\nadmin URL to disable it\n/management.asp, /remote.asp"] --> FAIL2["❌ 404 Not Found"]
+    T2["Search for hidden\nadmin URL to disable it\n/management.asp, /remote.asp"] --> FAIL2["404 Not Found"]
     FAIL2 --> T3
 
-    T3["Try Telnet/SSH\nto the router"] --> FAIL3["❌ Connection refused"]
+    T3["Try Telnet/SSH\nto the router"] --> FAIL3["Connection refused"]
     FAIL3 --> T4
 
-    T4["Check for\nfirmware update"] --> FAIL4["❌ ISP-locked\nNo update available"]
+    T4["Check for\nfirmware update"] --> FAIL4["ISP-locked\nNo update available"]
     FAIL4 --> CONCLUSION
 
-    CONCLUSION["🚧 Dead End\nAirtel firmware is a black box.\nISP routers are designed for consumers,\nnot for self-hosting."]
+    CONCLUSION["Dead End\nAirtel firmware is a black box.\nISP routers are designed for consumers,\nnot for self-hosting."]
 
     style START fill:#0984e3,stroke:#74b9ff,color:#fff
     style CONCLUSION fill:#d63031,stroke:#ff7675,color:#fff,font-weight:bold
@@ -120,7 +120,7 @@ The solution: run **pfSense** as a VM inside Proxmox. pfSense gets its own WAN i
 
 ```mermaid
 flowchart LR
-    BEFORE["Before ❌
+    BEFORE["Before 
     Airtel Router
     (controls everything)
     —

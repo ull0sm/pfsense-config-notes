@@ -1,10 +1,10 @@
-# 🛑 03. The Final Verdict (The CGNAT Reality)
+# 03. The Final Verdict (The CGNAT Reality)
 
 > **TL;DR:** After building a complex pfSense virtualization setup to bypass my ISP router's port 443 lock, I discovered the ultimate roadblock: Airtel FTTH put me behind a Carrier-Grade NAT (CGNAT). The direct hosting dream is officially dead.
 
 ---
 
-## 💥 The Discovery
+## The Discovery
 
 I thought I had a real public IP. During my initial checks, I somehow saw matching IPs, or perhaps Airtel dynamically moved me to a shared pool later. Either way, when I finally got everything working—pfSense routing, Proxmox bridges, TP-Link in true AP mode—I still couldn't access my web apps from the outside.
 
@@ -20,7 +20,7 @@ I was behind a **CGNAT**.
 
 ---
 
-## 📞 Calling Airtel Customer Care
+## Calling Airtel Customer Care
 
 I contacted Airtel to see if there was a way out. They offered a solution: **A Static IP**.
 
@@ -32,7 +32,7 @@ While it's a guaranteed way to get a public IP and bypass the CGNAT, I decided a
 
 ---
 
-## 🌍 The Indian ISP Landscape (CGNAT vs. Public IP)
+## The Indian ISP Landscape (CGNAT vs. Public IP)
 
 Interestingly, through conversations and web searches (documented in `context.txt`), I learned that you actually have a *higher* chance of getting a real public IP with **BSNL or local tier-3 broadband operators**.
 
@@ -42,7 +42,7 @@ Why? Because running a massive, efficient CGNAT infrastructure requires complex 
 
 ---
 
-## 🏁 The Final Verdict
+## The Final Verdict
 
 My attempt to directly host web apps by port forwarding 443 on Airtel FTTH is over. 
 
@@ -58,4 +58,4 @@ Since direct port forwarding is dead, the only solutions left are tunneling:
 1. **Cloudflare Tunnels (cloudflared):** Creates an outbound connection from my server to Cloudflare, bypassing CGNAT entirely.
 2. **Tailscale / Zerotier:** What I'm currently using. It creates a mesh VPN so I can securely access my services, though it doesn't allow random public internet users to visit my domain easily without a VPS relay.
 
-*Sometimes you build an entire rocket ship just to find out there's a concrete roof over the launch pad. But hey, at least I know how to build a rocket ship now.* 🚀
+*Sometimes you build an entire rocket ship just to find out there's a concrete roof over the launch pad. But hey, at least I know how to build a rocket ship now.* 

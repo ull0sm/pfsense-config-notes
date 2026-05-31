@@ -1,10 +1,10 @@
-# 🗺️ 01. The Goal & Architecture
+#  01. The Goal & Architecture
 
 > **TL;DR:** I had a spare PC, Proxmox, and a dream. My ISP had other plans. This is how I ended up virtualizing my own firewall to get around it.
 
 ---
 
-## 🎯 What I Wanted To Do
+## What I Wanted To Do
 
 It started with a very simple goal:
 
@@ -14,8 +14,8 @@ It started with a very simple goal:
 
 | Thing | Details |
 |:---|:---|
-| 🖥️ **Proxmox VE** | A spare PC turned hypervisor |
-| 📡 **Airtel FTTH** | ISP in India — thought it was a real public IP (it wasn't) |
+|  **Proxmox VE** | A spare PC turned hypervisor |
+| **Airtel FTTH** | ISP in India — thought it was a real public IP (it wasn't) |
 | 🧠 **Networking knowledge** | "Plug in ethernet, internet works" |
 
 ### What I wanted
@@ -27,33 +27,33 @@ Simple enough, right? **Wrong.** → See [02 — The ISP Wall](02-the-isp-wall.m
 
 ---
 
-## 🏗️ The Final Architecture
+## 🏗 The Final Architecture
 
 After a week of debugging and fighting my ISP router, I ended up virtualizing a **pfSense** firewall inside Proxmox. Here's the complete picture.
 
 ---
 
-### 🔌 Physical Cable Diagram
+### Physical Cable Diagram
 
 How the actual hardware is wired up:
 
 ```mermaid
 flowchart TD
-    NET(("🌐 Internet")) --> AIRTEL
+    NET(("Internet")) --> AIRTEL
 
-    AIRTEL["📡 **Airtel Router**
+    AIRTEL["**Airtel Router**
     ISP Router
     DHCP · NAT · Firewall · WiFi"]
 
-    AIRTEL -->|"Airtel WiFi\n(phones, TVs, laptops)"| AWIFI(("📱 Normal\nDevices"))
+    AIRTEL -->|"Airtel WiFi\n(phones, TVs, laptops)"| AWIFI(("Normal\nDevices"))
     AIRTEL -->|"LAN Cable"| NIC0
 
-    NIC0["🔌 Built-in Ethernet
+    NIC0["Built-in Ethernet
     nic0 → **vmbr0** (WAN)"]
 
     NIC0 --> PVE
 
-    PVE["🖥️ **Proxmox VE Host**
+    PVE[" **Proxmox VE Host**
     ┌──────────────────────┐
     │  vmbr0 = WAN bridge  │
     │  vmbr1 = LAN bridge  │
@@ -61,11 +61,11 @@ flowchart TD
 
     PVE -->|"USB Ethernet Adapter\nenxXXXXXXXXXXXX → vmbr1"| TPLINK
 
-    TPLINK["📶 **TP-Link Router**
+    TPLINK["**TP-Link Router**
     Access Point Mode
     DHCP: Disabled"]
 
-    TPLINK -->|"TP-Link WiFi"| LWIFI(("🔐 Protected\nDevices"))
+    TPLINK -->|"TP-Link WiFi"| LWIFI(("Protected\nDevices"))
 
     style NET fill:#2d3436,stroke:#dfe6e9,color:#fff,font-weight:bold
     style AIRTEL fill:#0984e3,stroke:#74b9ff,color:#fff
@@ -80,8 +80,8 @@ flowchart TD
 
 | Physical Interface | Linux Name | Proxmox Bridge | Role |
 |:---|:---|:---|:---|
-| Built-in Ethernet | `nic0` | `vmbr0` | 🌐 WAN — connects to Airtel |
-| USB Ethernet Adapter | `enxXXXXXXXXXXXX` | `vmbr1` | 🔐 LAN — connects to TP-Link AP |
+| Built-in Ethernet | `nic0` | `vmbr0` | WAN — connects to Airtel |
+| USB Ethernet Adapter | `enxXXXXXXXXXXXX` | `vmbr1` | LAN — connects to TP-Link AP |
 
 ---
 
@@ -91,50 +91,50 @@ How the IP addresses and subnets are structured — there are **two completely s
 
 ```mermaid
 flowchart TD
-    subgraph WAN ["☁️ AIRTEL NETWORK — 192.168.1.0/24 (vmbr0)"]
+    subgraph WAN [" AIRTEL NETWORK — 192.168.1.0/24 (vmbr0)"]
         direction TB
-        INET(("🌐 Internet\nPublic IP")) --> ISP
+        INET(("Internet\nPublic IP")) --> ISP
 
-        ISP["📡 Airtel Router
+        ISP["Airtel Router
         192.168.1.1
         NAT · DHCP · Firewall"]
 
         ISP --> PVE_HOST & UBUNTU & PF_WAN & OTHER
 
-        PVE_HOST["🖥️ Proxmox Host
+        PVE_HOST[" Proxmox Host
         192.168.1.240
         vmbr0"]
 
-        UBUNTU["🐧 Ubuntu VM
+        UBUNTU["Ubuntu VM
         192.168.1.18
         ens18
-        ⚠️ NOT behind pfSense"]
+        ⚠ NOT behind pfSense"]
 
-        PF_WAN["🔥 pfSense WAN
+        PF_WAN["pfSense WAN
         192.168.1.x
         vmbr0 NIC"]
 
-        OTHER(("📱 Other Airtel
+        OTHER(("Other Airtel
         Devices"))
     end
 
-    subgraph LAN ["🔐 pfSense PROTECTED NETWORK — 192.168.10.0/24 (vmbr1)"]
+    subgraph LAN ["pfSense PROTECTED NETWORK — 192.168.10.0/24 (vmbr1)"]
         direction TB
-        PF_LAN["🔥 pfSense LAN
+        PF_LAN["pfSense LAN
         192.168.10.1
         Firewall · DHCP · DNS"]
 
         PF_LAN -->|"vmbr1 → USB Ethernet\nenxXXXXXXXXXXXX"| TPLINK
 
-        TPLINK["📶 TP-Link AP
+        TPLINK["TP-Link AP
         Access Point
         DHCP: Off"]
 
         TPLINK --> C1 & C2 & C3
 
-        C1(("💻 Laptop\n192.168.10.x"))
-        C2(("📱 Phone\n192.168.10.x"))
-        C3(("🖥️ Other\n192.168.10.x"))
+        C1(("Laptop\n192.168.10.x"))
+        C2(("Phone\n192.168.10.x"))
+        C3((" Other\n192.168.10.x"))
     end
 
     PF_WAN -.->|"pfSense bridges\nWAN ↔ LAN"| PF_LAN
@@ -152,13 +152,13 @@ flowchart TD
 
 ---
 
-### 📋 IP Address Summary
+### IP Address Summary
 
 | Host | IP Address | Interface | Network | Protected by |
 |:---|:---|:---|:---|:---|
 | Airtel Router | `192.168.1.1` | — | `192.168.1.0/24` | ISP Firmware |
 | Proxmox Host | `192.168.1.240` | `vmbr0` | `192.168.1.0/24` | Airtel |
-| Ubuntu VM | `192.168.1.18` | `ens18` | `192.168.1.0/24` | Airtel ⚠️ |
+| Ubuntu VM | `192.168.1.18` | `ens18` | `192.168.1.0/24` | Airtel ⚠ |
 | pfSense WAN | `192.168.1.x` | `vmbr0` | `192.168.1.0/24` | Airtel |
 | pfSense LAN | `192.168.10.1` | `vmbr1` | `192.168.10.0/24` | **pfSense ✅** |
 | TP-Link AP | `192.168.10.2` | LAN port | `192.168.10.0/24` | **pfSense ✅** |
@@ -169,7 +169,7 @@ flowchart TD
 
 ---
 
-## 📖 What Comes Next
+## What Comes Next
 
 The rest of the docs cover exactly how I built this, what broke along the way, and the commands that fixed it:
 

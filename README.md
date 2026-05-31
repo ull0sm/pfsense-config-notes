@@ -1,4 +1,4 @@
-# 🏠 Homelab Network Documentation
+# Homelab Network Documentation
 
 > **A raw, technical documentation of my attempt to host web apps by building a pfSense router in my homelab.**
 >
@@ -12,17 +12,17 @@
 
 ---
 
-## 📖 The Short Version
+## The Short Version
 
 I wanted to self-host web apps on a spare PC. My ISP router said **no** (literally blocked port 443). So I learned how to virtualize my own firewall from scratch.
 
 ```mermaid
 flowchart LR
-    A(("🌐\nInternet")) --> B["📡 Airtel Router\n192.168.1.1"]
-    B -->|"LAN cable"| C["🖥️ Proxmox VE\n192.168.1.240"]
-    C --> D["🔥 pfSense VM\nWAN: 192.168.1.x\nLAN: 192.168.10.1"]
-    D -->|"USB Ethernet\nenxXXXXXXXXXXXX"| E["📶 TP-Link AP\nDHCP disabled"]
-    E -.->|"WiFi"| F(("📱 Protected\nDevices\n192.168.10.x"))
+    A(("\nInternet")) --> B["Airtel Router\n192.168.1.1"]
+    B -->|"LAN cable"| C[" Proxmox VE\n192.168.1.240"]
+    C --> D["pfSense VM\nWAN: 192.168.1.x\nLAN: 192.168.10.1"]
+    D -->|"USB Ethernet\nenxXXXXXXXXXXXX"| E["TP-Link AP\nDHCP disabled"]
+    E -.->|"WiFi"| F(("Protected\nDevices\n192.168.10.x"))
 
     style A fill:#2d3436,stroke:#dfe6e9,color:#fff
     style B fill:#0984e3,stroke:#74b9ff,color:#fff
@@ -34,17 +34,17 @@ flowchart LR
 
 ---
 
-## 📚 The War Stories
+## The War Stories
 
 | # | Doc | What It Covers |
 |:---:|:---|:---|
-| **01** | [🗺️ The Goal & Architecture](docs/01-the-goal.md) | Full physical + logical network diagrams, real IPs, bridge mapping, and the two-network split. |
-| **02** | [🧱 The ISP Wall](docs/02-the-isp-wall.md) | CGNAT check, NAT loopback trap, and the port 443 firmware lockout that forced pfSense. |
-| **03** | [🛑 The Final Verdict](docs/03-the-final-verdict.md) | The CGNAT realization, static IP costs in India, and why self-hosting on Airtel FTTH hit a dead end. |
+| **01** | [ The Goal & Architecture](docs/01-the-goal.md) | Full physical + logical network diagrams, real IPs, bridge mapping, and the two-network split. |
+| **02** | [The ISP Wall](docs/02-the-isp-wall.md) | CGNAT check, NAT loopback trap, and the port 443 firmware lockout that forced pfSense. |
+| **03** | [The Final Verdict](docs/03-the-final-verdict.md) | The CGNAT realization, static IP costs in India, and why self-hosting on Airtel FTTH hit a dead end. |
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Tool |
 |:---|:---|
@@ -55,12 +55,12 @@ flowchart LR
 
 ---
 
-## 🌍 Context
+## Context
 
-- **Location:** India 🇮🇳
+- **Location:** India 
 - **ISP:** Airtel FTTH — PPPoE connection (Initial thought: real public IPv4. Reality: CGNAT trap)
 - **Goal:** Understand how traffic routes from the internet to internal services by owning the firewall layer myself
 
 ---
 
-*This is a living document of my homelab learning process. The struggle is the documentation.* 🔧
+*This is a living document of my homelab learning process. The struggle is the documentation.* 
