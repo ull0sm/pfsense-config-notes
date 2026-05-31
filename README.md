@@ -18,19 +18,20 @@ I wanted to self-host web apps on a spare PC. My ISP router said **no** (literal
 
 ```mermaid
 flowchart LR
-    A(("\nInternet")) --> B["Airtel Router\n192.168.1.1"]
-    B -->|"LAN cable"| C[" Proxmox VE\n192.168.1.240"]
-    C --> D["pfSense VM\nWAN: 192.168.1.x\nLAN: 192.168.10.1"]
-    D -->|"USB Ethernet\nenxXXXXXXXXXXXX"| E["TP-Link AP\nDHCP disabled"]
-    E -.->|"WiFi"| F(("Protected\nDevices\n192.168.10.x"))
+    Internet((Internet))
+    Router[Airtel Router<br/>192.168.1.1]
+    Proxmox[Proxmox VE<br/>192.168.1.240]
+    PFSense[pfSense VM<br/>WAN: 192.168.1.x<br/>LAN: 192.168.10.1]
+    AP[TP-Link AP<br/>DHCP Disabled]
+    Devices((Protected Devices<br/>192.168.10.x))
 
-    style A fill:#2d3436,stroke:#dfe6e9,color:#fff
-    style B fill:#0984e3,stroke:#74b9ff,color:#fff
-    style C fill:#00b894,stroke:#55efc4,color:#fff
-    style D fill:#d63031,stroke:#ff7675,color:#fff
-    style E fill:#e17055,stroke:#fab1a0,color:#fff
-    style F fill:#6c5ce7,stroke:#a29bfe,color:#fff
+    Internet --> Router
+    Router --> Proxmox
+    Proxmox --> PFSense
+    PFSense --> AP
+    AP --> Devices
 ```
+
 
 ---
 
